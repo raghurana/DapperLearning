@@ -16,14 +16,31 @@ namespace DapperLearning.ConsoleApp
         public static void Main(string[] args)
         {
             SetupDatabase();
-            MainAsync().Wait();
+
+            try
+            {
+                MainAsync().Wait();
+            }
+            catch (Exception exception)
+            {
+                LogMessage(exception.Message, false);
+            }
+            
             TearDownDatabase();
-            Console.ReadLine();
         }
 
         private static async Task MainAsync()
         {
             var programRepo = Container.Get<ProgramRepository>();
+
+            var insertSuccessful = await programRepo.InsertRecords();
+            if (!insertSuccessful)
+            {
+                LogMessage("Failed to insert records !", false);
+                return;
+            }
+
+
         }
 
         private static void SetupDatabase()
