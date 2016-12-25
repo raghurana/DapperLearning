@@ -18,10 +18,10 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
             using (var connection = await factory.GetOpenWriteConnection())
             {
                 var facilityNoAreas = new Facility { Name = "Facility-1", IsActive = true };
-                facilityNoAreas.Id = await connection.InsertAsync<long>(facilityNoAreas);
+                facilityNoAreas.Id  = await connection.InsertAsync<long>(facilityNoAreas);
 
                 var facilityWithAreas = new Facility { Name = "Facility-2", IsActive = true };
-                facilityWithAreas.Id = await connection.InsertAsync<long>(facilityWithAreas);
+                facilityWithAreas.Id  = await connection.InsertAsync<long>(facilityWithAreas);
 
                 var area1 = new FacilityArea { FacilityId = facilityWithAreas.Id, Name = $"{facilityWithAreas.Name}-Area1" };
                 var area2 = new FacilityArea { FacilityId = facilityWithAreas.Id, Name = $"{facilityWithAreas.Name}-Area2" };
@@ -32,6 +32,20 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
                     area2.Id = await connection.InsertAsync<long>(area2, txn);
                     txn.Commit();
                 }
+
+                var qualDivOne  = new Qualification {Abbreviation = "Div1", Description = "Division One Nurse"};
+                var qualRn      = new Qualification {Abbreviation = "RN"  , Description = "Registered Nurse"};
+                var qualPca     = new Qualification {Abbreviation = "PCA" , Description = "Personal Care Assistant"};
+
+                using (var txn = connection.BeginTransaction())
+                {
+                    qualDivOne.Id = await connection.InsertAsync<long>(qualDivOne, txn);
+                    qualRn.Id     = await connection.InsertAsync<long>(qualRn, txn);
+                    qualPca.Id    = await connection.InsertAsync<long>(qualPca, txn);
+                    txn.Commit();
+                }
+
+
             }
 
             return true;
