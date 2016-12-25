@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Dapper;
 using DapperLearning.ConsoleApp.Data.Entities;
 
@@ -45,10 +47,28 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
                     txn.Commit();
                 }
 
+                var vacancy1 = new Vacancy {FacilityId = facilityNoAreas.Id, CreatedDateUtc = DateTime.UtcNow};
+                var vacancy2 = new Vacancy {FacilityId = facilityWithAreas.Id, FacilityAreaId = area1.Id, CreatedDateUtc = DateTime.UtcNow};
+                var vacancy3 = new Vacancy {FacilityId = facilityWithAreas.Id, FacilityAreaId = area2.Id, CreatedDateUtc = DateTime.UtcNow};
 
+                using (var txn = connection.BeginTransaction())
+                {
+                    await AddVacancyWithQualification(vacancy1, qualDivOne, connection, txn);
+                    await AddVacancyWithQualification(vacancy2, qualRn, connection, txn);
+                    await AddVacancyWithQualification(vacancy3, qualPca, connection, txn);
+                    txn.Commit();
+                }
+
+                return true;
             }
+        }
 
-            return true;
+        private static async Task<VacancyQualificationMapping> AddVacancyWithQualification(Vacancy vacancy, Qualification qualification, SqlConnection connection, SqlTransaction txn)
+        {
+            vacancy.Id  = await connection.InsertAsync<long>(vacancy, txn);
+            var map = new VacancyQualificationMapping { VacancyId = vacancy.Id, QualificationId = qualification.Id };
+            map.Id  = await connection.InsertAsync<long>(map, txn);
+            return map;
         }
     }
 }
