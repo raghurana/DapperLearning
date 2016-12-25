@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using DapperLearning.ConsoleApp.Data.Entities;
@@ -58,9 +60,40 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
                     await AddVacancyWithQualification(vacancy3, qualPca, connection, txn);
                     txn.Commit();
                 }
-
-                return true;
             }
+
+            return true;
+        }
+
+        public async Task<bool> UpdateRecords()
+        {
+            using (var connection = await factory.GetOpenWriteConnection())
+            {
+                var facilities = (await 
+                                    connection.GetListAsync<Facility>(
+                                        $"where {nameof(Facility.Name)} = @FacilityName",
+                                        new {FacilityName = "Facility-1"})
+                                 ).ToList();
+
+                if(!facilities.Any())
+                    throw new Exception("No facilities found");
+
+                var facility = facilities.First();
+                facility.Name = "Facility-1-NoAreas";
+
+                var updateCount = await connection.UpdateAsync(facility);
+                if(updateCount == 0)
+                    throw new Exception("Failed to update facility with no areas");
+
+                updateCount = await connection.ExecuteAsync(
+                                $"Update {nameof(Facility)} set {nameof(Facility.Name)} = @NewFacName where {nameof(Facility.Name)} = @OldFacName",
+                                new { OldFacName = "Facility-1-NoAreas", NewFacName = "Facility-1"});
+
+                if (updateCount == 0)
+                    throw new Exception("Failed to update facility with no areas using Execute Async");
+            }
+
+            return true;
         }
 
         private static async Task<VacancyQualificationMapping> AddVacancyWithQualification(Vacancy vacancy, Qualification qualification, SqlConnection connection, SqlTransaction txn)

@@ -36,10 +36,16 @@ namespace DapperLearning.ConsoleApp
             var insertSuccessful = await programRepo.InsertRecords();
             if (!insertSuccessful)
             {
-                LogMessage("Failed to insert records !", false);
+                LogMessage("Failed to Insert records !", false);
                 return;
             }
 
+            var updateSuccessful = await programRepo.UpdateRecords();
+            if (!updateSuccessful)
+            {
+                LogMessage("Failed to Update records !", false);
+                return;
+            }
 
         }
 
