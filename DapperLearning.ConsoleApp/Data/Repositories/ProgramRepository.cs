@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using DapperLearning.ConsoleApp.Data.Entities;
+using DapperLearning.ConsoleApp.Data.Queries;
 using DapperLearning.ConsoleApp.Data.QueryResults;
 using DapperLearning.ConsoleApp.Utils;
 
@@ -13,12 +14,12 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
     public class ProgramRepository
     {
         private readonly IDbConnectionProvider factory;
-        private readonly IResourceReader resourceReader;
+        private readonly ICustomQueryProvider customQueryProvider;
 
-        public ProgramRepository(IDbConnectionProvider factory, IResourceReader resourceReader)
+        public ProgramRepository(IDbConnectionProvider factory, ICustomQueryProvider customQueryProvider)
         {
             this.factory = factory;
-            this.resourceReader = resourceReader;
+            this.customQueryProvider = customQueryProvider;
         }
 
         public async Task<bool> InsertRecords()
@@ -110,9 +111,17 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
             }
         }
 
-        public void GetVacanciesByFacility()
+        public async Task<IList<VacancyByFacilityArea>> GetVacanciesByFacility()
         {
-            var sql = resourceReader.GetResourceContents<string>("Data.Queries", "VacanciesByFacility.sql");
+            using (var connection = await factory.GetOpenWriteConnection())
+            {
+                var sql    = customQueryProvider.VacancyQueries.VacanciesByFilterQuery;
+                var result = await
+                    connection.QueryAsync<Vacancy, Qualification, Facility, FacilityArea, VacancyByFacilityArea>(sql,
+                        (v, q, f, fa) => new VacancyByFacilityArea(v, q, f, fa));
+
+                return result.ToList();
+            }
         }
 
         private static async Task<VacancyQualificationMapping> AddVacancyWithQualification(Vacancy vacancy, Qualification qualification, SqlConnection connection, SqlTransaction txn)

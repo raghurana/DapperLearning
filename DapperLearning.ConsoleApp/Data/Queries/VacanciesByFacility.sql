@@ -1,7 +1,7 @@
 ﻿SELECT DISTINCT
     v.*
-    ,q.*
-    ,f.*
+    ,q.* 
+    ,f.* 
     ,fa.*
 FROM dbo.Vacancy                           as v 
 INNER JOIN dbo.VacancyQualificationMapping as vq ON v.Id = vq.VacancyId
