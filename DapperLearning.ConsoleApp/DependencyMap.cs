@@ -1,4 +1,5 @@
 ﻿using DapperLearning.ConsoleApp.Data;
+using DapperLearning.ConsoleApp.Utils;
 using Ninject.Modules;
 
 namespace DapperLearning.ConsoleApp
@@ -9,6 +10,7 @@ namespace DapperLearning.ConsoleApp
         {
             Bind<IConnectionStringProvider>().To<AppSettingConnectionStringProvider>().InSingletonScope();
             Bind<IDbConnectionProvider>().To<DefaultDbConnectionProvider>().InSingletonScope();
+            Bind<IResourceReader>().ToConstant(new AssemblyResourceReader(GetType()));
         }
     }
 }

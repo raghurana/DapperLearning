@@ -48,6 +48,7 @@ namespace DapperLearning.ConsoleApp
             }
 
             await programRepo.GetAllFacilitiesWithAreas();
+            programRepo.GetVacanciesByFacility();
         }
 
         private static void SetupDatabase()
@@ -60,7 +61,7 @@ namespace DapperLearning.ConsoleApp
             var upgrader =
                 DeployChanges.To
                     .SqlDatabase(writeConnectionString)
-                    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), ScriptsFilter)
                     .LogToConsole()
                     .Build();
 
@@ -99,6 +100,11 @@ namespace DapperLearning.ConsoleApp
             Console.ForegroundColor = (isSuccess) ? ConsoleColor.Green : ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
+        }
+
+        private static bool ScriptsFilter(string fullyQualifiedFileName)
+        {
+            return fullyQualifiedFileName.Contains("Scripts.Script");
         }
     }
 }

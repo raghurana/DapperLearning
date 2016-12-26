@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using Dapper;
 using DapperLearning.ConsoleApp.Data.Entities;
 using DapperLearning.ConsoleApp.Data.QueryResults;
+using DapperLearning.ConsoleApp.Utils;
 
 namespace DapperLearning.ConsoleApp.Data.Repositories
 {
     public class ProgramRepository
     {
         private readonly IDbConnectionProvider factory;
+        private readonly IResourceReader resourceReader;
 
-        public ProgramRepository(IDbConnectionProvider factory)
+        public ProgramRepository(IDbConnectionProvider factory, IResourceReader resourceReader)
         {
             this.factory = factory;
+            this.resourceReader = resourceReader;
         }
 
         public async Task<bool> InsertRecords()
@@ -105,6 +108,11 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
                 var result = await connection.QueryAsync<Facility, FacilityArea, FacilityWithArea>(query, (f, fa) => new FacilityWithArea(f, fa));
                 return result.ToList();
             }
+        }
+
+        public void GetVacanciesByFacility()
+        {
+            var sql = resourceReader.GetResourceContents<string>("Data.Queries", "VacanciesByFacility.sql");
         }
 
         private static async Task<VacancyQualificationMapping> AddVacancyWithQualification(Vacancy vacancy, Qualification qualification, SqlConnection connection, SqlTransaction txn)

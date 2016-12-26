@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\IConnectionStringProvider.cs" />
+    <Compile Include="Utils\IResourceReader.cs" />
+    <EmbeddedResource Include="Data\Queries\VacanciesByFacility.sql" />
     <Compile Include="Data\QueryResults\FacilityWithArea.cs" />
     <Compile Include="Data\Repositories\ProgramRepository.cs" />
     <Compile Include="DependencyMap.cs" />
