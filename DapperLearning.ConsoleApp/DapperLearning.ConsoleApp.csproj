@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\IConnectionStringProvider.cs" />
+    <Compile Include="Data\QueryResults\FacilityWithArea.cs" />
     <Compile Include="Data\Repositories\ProgramRepository.cs" />
     <Compile Include="DependencyMap.cs" />
     <Compile Include="Data\Entities\BaseEntity.cs" />
@@ -72,11 +73,12 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\QueryResults\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Scripts\Script0001-CreateTables.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

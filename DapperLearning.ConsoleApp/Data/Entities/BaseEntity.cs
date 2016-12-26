@@ -4,6 +4,8 @@ namespace DapperLearning.ConsoleApp.Data.Entities
 {
     public abstract class BaseEntity
     {
+        public const string FieldDelimeter = ", ";
+
         public long Id { get; set; }
     }
 
@@ -12,6 +14,11 @@ namespace DapperLearning.ConsoleApp.Data.Entities
         public string Name { get; set; }
 
         public bool IsActive { get; set; }
+
+        public override string ToString()
+        {
+            return $"FacilityId={Id}{FieldDelimeter}Name={Name}";
+        }
     }
 
     public class FacilityArea : BaseEntity
@@ -19,6 +26,11 @@ namespace DapperLearning.ConsoleApp.Data.Entities
         public long FacilityId { get; set; }
 
         public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"AreaId={Id}{FieldDelimeter}Name={Name}";
+        }
     }
 
     public class Qualification : BaseEntity
@@ -26,6 +38,11 @@ namespace DapperLearning.ConsoleApp.Data.Entities
         public string Abbreviation { get; set; }
 
         public string Description { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}{FieldDelimeter}{Abbreviation}";
+        }
     }
 
     public class Vacancy : BaseEntity
@@ -35,6 +52,11 @@ namespace DapperLearning.ConsoleApp.Data.Entities
         public long? FacilityAreaId { get; set; }
 
         public DateTime CreatedDateUtc { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}{FieldDelimeter}FacilityId={FacilityId}{FieldDelimeter}AreaId={FacilityAreaId}{FieldDelimeter}CreateDateUtc={CreatedDateUtc}";
+        }
     }
 
     public class VacancyQualificationMapping : BaseEntity
@@ -42,5 +64,10 @@ namespace DapperLearning.ConsoleApp.Data.Entities
         public long VacancyId { get; set; }
 
         public long QualificationId { get; set; }
+
+        public override string ToString()
+        {
+            return $"VacancyId={VacancyId}{FieldDelimeter}QualId={QualificationId}";
+        }
     }
 }

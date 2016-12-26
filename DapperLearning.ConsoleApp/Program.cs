@@ -47,6 +47,7 @@ namespace DapperLearning.ConsoleApp
                 return;
             }
 
+            await programRepo.GetAllFacilitiesWithAreas();
         }
 
         private static void SetupDatabase()

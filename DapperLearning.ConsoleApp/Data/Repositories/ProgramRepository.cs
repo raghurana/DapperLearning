@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using DapperLearning.ConsoleApp.Data.Entities;
+using DapperLearning.ConsoleApp.Data.QueryResults;
 
 namespace DapperLearning.ConsoleApp.Data.Repositories
 {
@@ -94,6 +95,16 @@ namespace DapperLearning.ConsoleApp.Data.Repositories
             }
 
             return true;
+        }
+
+        public async Task<IList<FacilityWithArea>> GetAllFacilitiesWithAreas()
+        {
+            using (var connection = await factory.GetOpenWriteConnection())
+            {
+                var query  = "select * from Facility f left join FacilityArea fa on f.Id = fa.FacilityId";
+                var result = await connection.QueryAsync<Facility, FacilityArea, FacilityWithArea>(query, (f, fa) => new FacilityWithArea(f, fa));
+                return result.ToList();
+            }
         }
 
         private static async Task<VacancyQualificationMapping> AddVacancyWithQualification(Vacancy vacancy, Qualification qualification, SqlConnection connection, SqlTransaction txn)
